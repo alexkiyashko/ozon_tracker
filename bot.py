@@ -276,7 +276,7 @@ async def cmd_proxy_list(message: Message):
 
     def mask(p: str) -> str:
         # Маскируем пароль
-            parts = p.split(":")
+        parts = p.split(":")
         if len(parts) >= 4:
             return f"{parts[0]}:{parts[1]}:{parts[2]}:***"
         return p
@@ -452,10 +452,10 @@ async def handle_url(message: Message):
 
 async def main():
     """Запуск бота"""
-        await db.init_db()
+    await db.init_db()
     logger.info("✅ База данных инициализирована")
     logger.info("🚀 Бот запущен!")
-        await dp.start_polling(bot)
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
