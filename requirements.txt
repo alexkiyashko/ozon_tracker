@@ -1,0 +1,17 @@
+# Telegram Bot
+aiogram==3.15.0
+
+# Database
+aiosqlite==0.20.0
+
+# Parser (Playwright)
+playwright>=1.40.0
+beautifulsoup4==4.12.3
+
+# Charts
+matplotlib==3.10.0
+pillow==11.0.0
+python-dateutil==2.9.0
+
+# Utils
+setuptools>=65.5.0
