@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 db = Database("ozon_tracker.db")
-        parser = OzonParser()
+parser = OzonParser()
 chart_gen = ChartGenerator()
 
 # Загрузка прокси

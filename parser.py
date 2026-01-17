@@ -55,7 +55,7 @@ class OzonParser:
         proxy = self._proxy_list[self._proxy_index % len(self._proxy_list)]
         self._proxy_index += 1
         return proxy
-
+    
     async def _human_delay(self, min_sec: float = 1.0, max_sec: float = 3.0):
         """Имитация человеческой задержки между действиями"""
         await asyncio.sleep(random.uniform(min_sec, max_sec))
@@ -68,11 +68,11 @@ class OzonParser:
         
         # Настройка прокси
         proxy_config = None
-            if proxy:
+        if proxy:
             # Формат: IP:PORT:LOGIN:PASSWORD или socks5://...
             if proxy.startswith("socks5://") or proxy.startswith("http://"):
                 proxy_config = {"server": proxy}
-                        else:
+            else:
                 parts = proxy.split(":")
                 if len(parts) >= 4:
                     ip, port, login, password = parts[0], parts[1], parts[2], ":".join(parts[3:])
@@ -192,7 +192,7 @@ class OzonParser:
             await self.page.evaluate("window.scrollTo({top: 0, behavior: 'smooth'});")
             await self._human_delay(0.3, 0.5)
             
-            except Exception as e:
+        except Exception as e:
             logger.debug(f"Ошибка при имитации поведения: {e}")
     
     async def _warm_up(self):
@@ -211,7 +211,7 @@ class OzonParser:
         except Exception as e:
             logger.warning(f"⚠️ Warm-up не удался: {e}")
             return False
-
+    
     async def _close_browser(self):
         """Закрытие браузера"""
         try:
@@ -261,8 +261,8 @@ class OzonParser:
     async def _bypass_antibot(self, max_attempts: int = 3) -> bool:
         """Попытка обхода антибот защиты"""
         if not self.page:
-        return False
-    
+            return False
+        
         logger.info("🔄 Пытаюсь обойти антибот защиту...")
         
         for attempt in range(1, max_attempts + 1):
@@ -280,8 +280,8 @@ class OzonParser:
                         html = await self.page.content()
                         if not self._detect_antibot(html):
                             return True
-                    except Exception:
-                        pass
+                except Exception:
+                    pass
                 
                 # 2. Имитация человеческого поведения
                 await self._simulate_human_behavior()
@@ -309,7 +309,7 @@ class OzonParser:
                     if not self._detect_antibot(html):
                         return True
                     
-                            except Exception as e:
+            except Exception as e:
                 logger.error(f"Ошибка в попытке {attempt}: {e}")
         
         logger.warning("⚠️ Не удалось обойти антибот защиту")
@@ -331,7 +331,7 @@ class OzonParser:
                 await self.page.wait_for_selector(selector, timeout=8000)
                 return
             except Exception:
-                    continue
+                continue
     
     def _parse_name(self, soup) -> str:
         """Парсинг названия товара"""
@@ -363,7 +363,7 @@ class OzonParser:
                         return price
             
             # 2. Поиск по паттернам в HTML
-        patterns = [
+            patterns = [
                 r'(\d[\d\s]{2,})\s*₽',
                 r'₽\s*(\d[\d\s]{2,})',
             ]
@@ -374,18 +374,18 @@ class OzonParser:
                     price = float(match.group(1).replace(' ', '').replace('\xa0', ''))
                     if PRICE_MIN <= price <= PRICE_MAX:
                         return price
-
-        return None
-            except Exception:
+            
             return None
-
+        except Exception:
+            return None
+    
     def _parse_stock(self, html: str) -> tuple:
         """Парсинг наличия"""
         text = html.lower()
         if any(p in text for p in ['нет в наличии', 'закончился', 'товар закончился']):
             return False, "Нет в наличии"
         return True, "В наличии"
-
+    
     async def parse_product_async(self, url: str) -> Optional[Dict]:
         """Асинхронный парсинг товара"""
         max_attempts = 2
@@ -408,7 +408,7 @@ class OzonParser:
                 logger.info("📥 Загружаю страницу товара...")
                 try:
                     await self.page.goto(url, wait_until='domcontentloaded', timeout=PARSER_TIMEOUT)
-                    except Exception as e:
+                except Exception as e:
                     logger.warning(f"⚠️ Таймаут загрузки: {e}")
                 
                 await self._wait_for_content()
@@ -424,25 +424,25 @@ class OzonParser:
                         html = await self.page.content()
                     else:
                         await self._close_browser()
-                    continue
-            
+                        continue
+                
                 # Парсинг данных
-            soup = BeautifulSoup(html, 'html.parser')
-            name = self._parse_name(soup)
-            price = self._parse_price(html, soup)
-            
-            if price:
+                soup = BeautifulSoup(html, 'html.parser')
+                name = self._parse_name(soup)
+                price = self._parse_price(html, soup)
+                
+                if price:
                     in_stock, stock_text = self._parse_stock(html)
-                result = {
-                    'name': name,
-                    'price': price,
+                    result = {
+                        'name': name,
+                        'price': price,
                         'in_stock': in_stock,
-                    'stock_quantity': stock_text,
-                }
+                        'stock_quantity': stock_text,
+                    }
                     logger.info(f"✅ НАЙДЕНО: {name[:40]}... = {price:.0f} ₽")
                     await self._close_browser()
-                return result
-            else:
+                    return result
+                else:
                     logger.warning("❌ Цена не найдена")
                     await self._close_browser()
                     
@@ -451,8 +451,8 @@ class OzonParser:
                 await self._close_browser()
         
         logger.error("❌ Все попытки парсинга неудачны")
-                return None
-                
+        return None
+    
     def parse_product(self, url: str, **kwargs) -> Optional[Dict]:
         """Синхронная обертка для парсинга (для совместимости)"""
         try:
